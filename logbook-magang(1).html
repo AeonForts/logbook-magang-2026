@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logbook Magang — Turbines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy: #0B2E4F;
+    --navy-deep: #071F38;
+    --teal: #1B7A8C;
+    --teal-light: #5FA8B5;
+    --foam: #EEF5F4;
+    --paper: #FBFCFB;
+    --coral: #E07A3F;
+    --ink: #16242F;
+    --ink-soft: #5B6B73;
+    --line: #D9E2E1;
+    --ok: #2F9E68;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--foam);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:32px 20px 80px;}
+
+  header{
+    background:linear-gradient(160deg, var(--navy-deep), var(--navy) 70%);
+    border-radius:18px;
+    padding:28px 30px 24px;
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:22px;
+  }
+  header::after{
+    content:"";
+    position:absolute; right:-40px; top:-60px;
+    width:220px;height:220px;border-radius:50%;
+    background:radial-gradient(circle, rgba(95,168,181,.35), transparent 70%);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--teal-light); margin:0 0 6px;
+  }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:28px; margin:0 0 4px; font-weight:700; letter-spacing:-.01em;
+  }
+  .sub{color:#C7D6DC; font-size:14px; margin:0 0 22px;}
+
+  .tide{position:relative; height:34px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden; border:1px solid rgba(255,255,255,.18);}
+  .tide-fill{
+    position:absolute; left:0; top:0; bottom:0; width:0%;
+    background:linear-gradient(90deg, var(--teal), #7FC4CF);
+    transition:width .5s ease;
+  }
+  .tide-fill svg{position:absolute; right:-1px; top:0; height:100%; width:24px;}
+  .tide-label{
+    position:relative; z-index:2; height:100%; display:flex; align-items:center; justify-content:space-between;
+    padding:0 14px; font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:#fff;
+  }
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:22px 24px;
+    margin-bottom:18px;
+  }
+  .card h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:16px; margin:0 0 16px; color:var(--navy);
+  }
+  label{display:block; font-size:12.5px; color:var(--ink-soft); margin-bottom:5px; font-weight:500;}
+  input[type=date], input[type=text], textarea{
+    width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:9px;
+    font-family:'IBM Plex Sans', sans-serif; font-size:14px; color:var(--ink); background:#fff;
+  }
+  input:focus, textarea:focus{outline:2px solid var(--teal-light); outline-offset:1px; border-color:var(--teal);}
+  textarea{resize:vertical; min-height:64px;}
+  .row2{display:grid; grid-template-columns:180px 1fr; gap:14px; margin-bottom:14px;}
+  .field{margin-bottom:14px;}
+  @media (max-width:600px){ .row2{grid-template-columns:1fr;} }
+
+  .btn{
+    appearance:none; border:none; cursor:pointer; font-family:'IBM Plex Sans', sans-serif;
+    font-size:13.5px; font-weight:600; padding:10px 18px; border-radius:9px;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn-primary{background:var(--navy); color:#fff;}
+  .btn-primary:hover{background:var(--navy-deep);}
+  .btn-ghost{background:transparent; color:var(--navy); border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--teal); color:var(--teal);}
+  .btn-sm{padding:6px 10px; font-size:12.5px; border-radius:7px;}
+  .btn-danger{color:#B3402A;}
+  .btn-danger:hover{background:#FBEAE4;}
+
+  .toolbar{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+  .toolbar .count{font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--ink-soft);}
+  .search{flex:1; min-width:180px; max-width:280px;}
+
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  thead th{
+    text-align:left; font-family:'IBM Plex Mono', monospace; font-weight:500; font-size:11.5px;
+    letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft);
+    padding:8px 10px; border-bottom:1px solid var(--line);
+  }
+  tbody td{padding:12px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+  tbody tr:hover{background:var(--foam);}
+  .td-date{white-space:nowrap; font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--navy); font-weight:500;}
+  .td-kegiatan{font-weight:600; color:var(--ink);}
+  .td-desc{color:var(--ink-soft); font-size:12.8px; max-width:320px;}
+  .actions{display:flex; gap:6px; white-space:nowrap;}
+
+  .empty{
+    text-align:center; padding:40px 20px; color:var(--ink-soft);
+  }
+  .empty-wave{font-family:'Space Grotesk', sans-serif; font-size:15px; color:var(--navy); margin-bottom:6px;}
+
+  .footer-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;}
+  .toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--navy-deep); color:#fff; padding:10px 18px; border-radius:9px;
+    font-size:13px; opacity:0; transition:all .25s ease; pointer-events:none; z-index:50;
+    font-family:'IBM Plex Sans', sans-serif;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  .modal-bg{
+    position:fixed; inset:0; background:rgba(7,31,56,.45); display:none;
+    align-items:center; justify-content:center; z-index:40; padding:20px;
+  }
+  .modal-bg.show{display:flex;}
+  .modal{background:#fff; border-radius:16px; padding:24px; max-width:440px; width:100%;}
+  .modal h3{font-family:'Space Grotesk', sans-serif; margin:0 0 8px; font-size:16px; color:var(--navy);}
+  .modal p{font-size:13.5px; color:var(--ink-soft); margin:0 0 18px;}
+  .modal .actions{justify-content:flex-end;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Logbook Kegiatan · Maritim Muda Nusantara</p>
+    <h1>Turbines — Training Course</h1>
+    <p class="sub">23 Feb — 26 Jun 2026 · isi setiap hari kerja, lalu salin ke Google Form saat sempat</p>
+    <p class="sub" style="margin-top:-14px; font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:.03em;" id="storageBadge">Memeriksa penyimpanan...</p>
+    <div class="tide">
+      <div class="tide-fill" id="tideFill"></div>
+      <div class="tide-label">
+        <span id="tideText">0 / 0 hari kerja terisi</span>
+        <span id="tidePct">0%</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="card">
+    <h2 id="formTitle">Tambah entri</h2>
+    <div class="row2">
+      <div class="field">
+        <label for="fDate">Tanggal</label>
+        <input type="date" id="fDate">
+      </div>
+      <div class="field">
+        <label for="fKegiatan">Kegiatan</label>
+        <input type="text" id="fKegiatan" placeholder="mis. Debugging endpoint POST /api/gform/create">
+      </div>
+    </div>
+    <div class="field">
+      <label for="fDesc">Deskripsi / Keterangan</label>
+      <textarea id="fDesc" placeholder="Detail singkat apa yang dikerjakan, kendala, atau hasil hari ini..."></textarea>
+    </div>
+    <div class="footer-actions">
+      <button class="btn btn-primary" id="saveBtn">Simpan entri</button>
+      <button class="btn btn-ghost" id="cancelEditBtn" style="display:none;">Batal edit</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="toolbar">
+      <h2 style="margin:0;">Daftar entri</h2>
+      <input class="search" type="text" id="searchBox" placeholder="Cari kegiatan...">
+    </div>
+    <div class="toolbar">
+      <span class="count" id="entryCount">0 entri</span>
+      <div class="footer-actions">
+        <button class="btn btn-ghost btn-sm" id="importCsvBtn">Impor CSV</button>
+        <input type="file" id="importCsvInput" accept=".csv" style="display:none;">
+        <button class="btn btn-ghost btn-sm" id="exportCsvBtn">Ekspor CSV</button>
+        <button class="btn btn-primary btn-sm" id="exportSnapshotBtn">Unduh HTML dengan data ini</button>
+        <button class="btn btn-ghost btn-sm" id="exportTextBtn">Salin semua (teks)</button>
+      </div>
+    </div>
+    <div id="tableWrap"></div>
+  </div>
+
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>Hapus entri ini?</h3>
+    <p>Entri logbook yang dihapus tidak dapat dikembalikan.</p>
+    <div class="actions">
+      <button class="btn btn-ghost btn-sm" id="modalCancel">Batal</button>
+      <button class="btn btn-sm btn-danger" style="background:#B3402A; color:#fff;" id="modalConfirm">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // Pre-baked snapshot — empty by default. "Unduh HTML dengan data ini"
+  // regenerates this file with your current entries filled in here,
+  // so anyone opening the new file sees them immediately.
+  window.__SNAPSHOT__ = [{"id":"e17842476841021q6i1","date":"2026-02-23","kegiatan":"Pengenalan perusahaan","desc":"Pengenalan perusahaan maritim muda dan workplace"},{"id":"e1784475357925k6qwr","date":"2026-02-23","kegiatan":"Onboarding","desc":"Mengikuti proses onboarding dan perkenalan dengan perusahaan."},{"id":"e1784247684102y3k2o","date":"2026-02-24","kegiatan":"Pengenalan perusahaan","desc":"pengenalan perusahaan dibawah maritim muda"},{"id":"e17844753579255hc1b","date":"2026-02-24","kegiatan":"Perkenalan tim","desc":"Berkenalan dengan anggota tim dan pembimbing."},{"id":"e17842476841025lmvy","date":"2026-02-25","kegiatan":"Pengenalan anggota","desc":"Pengenalan anggota"},{"id":"e1784475357925f7crj","date":"2026-02-25","kegiatan":"Pengenalan project","desc":"Mendapat penjelasan mengenai project yang akan dikerjakan."},{"id":"e1784247684102rkebc","date":"2026-02-26","kegiatan":"Pengenalan senior","desc":"Senior perusahaan datang untuk kenalan"},{"id":"e1784475357925mr2ch","date":"2026-02-26","kegiatan":"Pengenalan perusahaan","desc":"Mengenal lingkungan kerja perusahaan."},{"id":"e1784247684102hhbrf","date":"2026-02-27","kegiatan":"Pengenalan lingkungan perusahaan","desc":"dikenalkan bahwa perusahaan memiliki berbagai tempat"},{"id":"e1784475357925xx9bc","date":"2026-02-27","kegiatan":"Pengenalan tech stack","desc":"Mengenal teknologi yang digunakan pada project."},{"id":"e1784247684102w7c01","date":"2026-03-02","kegiatan":"pengenalan tech stack","desc":"pengenalan tech stack yang akan digunakan"},{"id":"e17844753579255ndig","date":"2026-03-02","kegiatan":"Diskusi tech stack","desc":"Mengikuti diskusi mengenai teknologi yang digunakan."},{"id":"e1784247684102jswbf","date":"2026-03-03","kegiatan":"Pemilihan tech stack","desc":"mulai dari front end dan back end"},{"id":"e1784475357925dwlkd","date":"2026-03-03","kegiatan":"Setup project","desc":"Menyiapkan project di komputer lokal."},{"id":"e1784247684102ri2ze","date":"2026-03-04","kegiatan":"pemilihan stack","desc":"masih dalam proses pemilihan dan menunggu lead tech"},{"id":"e17844753579251v4om","date":"2026-03-04","kegiatan":"Clone repository","desc":"Melakukan clone repository dari GitHub."},{"id":"e1784247684103uju6y","date":"2026-03-05","kegiatan":"pemilihan tech stack","desc":"Tim sudah membuat keputusan dalam stack yang akan digunakan namun menunggu tech lead"},{"id":"e1784475357925bytas","date":"2026-03-05","kegiatan":"Install dependency","desc":"Melakukan instalasi dependency project."},{"id":"e1784247684103mte4i","date":"2026-03-06","kegiatan":"Keputusan tech stack","desc":"tech stack diputuskan sesuai dengan developer dan tech lead"},{"id":"e1784475357926s19cs","date":"2026-03-06","kegiatan":"Menjalankan project","desc":"Mencoba menjalankan project di komputer lokal."},{"id":"e1784468583341d5hej","date":"2026-03-09","kegiatan":"pembagian job desk","desc":""},{"id":"e17844753579278668j","date":"2026-03-09","kegiatan":"Belajar React","desc":"Mempelajari dasar React pada project."},{"id":"e1784469756582wrsd6","date":"2026-03-10","kegiatan":"pembagian job desk","desc":""},{"id":"e1784475357927tfvt6","date":"2026-03-10","kegiatan":"Belajar Next.js","desc":"Mempelajari struktur Next.js."},{"id":"e1784475357927cfjv7","date":"2026-03-11","kegiatan":"Belajar TypeScript","desc":"Memahami penggunaan TypeScript."},{"id":"e1784475357927dsvrq","date":"2026-03-12","kegiatan":"Belajar Tailwind","desc":"Memahami penggunaan Tailwind CSS."},{"id":"e17844753579278ep2c","date":"2026-03-13","kegiatan":"Review source code","desc":"Membaca source code yang sudah ada."},{"id":"e17844753579279fqut","date":"2026-03-16","kegiatan":"Belajar REST API","desc":"Mempelajari endpoint API."},{"id":"e1784475357927kxog6","date":"2026-03-17","kegiatan":"Diskusi API","desc":"Berdiskusi mengenai penggunaan API."},{"id":"e17844753579278av7o","date":"2026-03-18","kegiatan":"Koordinasi","desc":"Berkoordinasi dengan Team Lead."},{"id":"e17844753579275s7bn","date":"2026-03-19","kegiatan":"Meeting progress","desc":"Mengikuti meeting progress."},{"id":"e17844753579273d0xw","date":"2026-03-20","kegiatan":"Review project","desc":"Meninjau kembali struktur project."},{"id":"e1784475357927lpq7e","date":"2026-03-23","kegiatan":"Memahami GForm","desc":"Mempelajari komponen GForm."},{"id":"e1784475357927l5bsp","date":"2026-03-24","kegiatan":"Implementasi form","desc":"Mulai mengerjakan bagian form."},{"id":"e1784475357927blhx3","date":"2026-03-25","kegiatan":"Validasi form","desc":"Menambahkan validasi input."},{"id":"e1784475357927007xi","date":"2026-03-26","kegiatan":"Perbaikan UI","desc":"Menyesuaikan tampilan halaman."},{"id":"e1784475357927gy2ug","date":"2026-03-27","kegiatan":"Integrasi API","desc":"Menghubungkan frontend dengan API."},{"id":"e1784475357927gerik","date":"2026-03-30","kegiatan":"Testing","desc":"Melakukan pengujian fitur."},{"id":"e1784475357927in5so","date":"2026-03-31","kegiatan":"Debugging","desc":"Mencari penyebab error."},{"id":"e1784475357927xiewu","date":"2026-04-01","kegiatan":"Perbaikan bug","desc":"Memperbaiki bug yang ditemukan."},{"id":"e17844753579273kzrc","date":"2026-04-02","kegiatan":"Revisi kode","desc":"Melakukan revisi berdasarkan masukan."},{"id":"e1784475357927edgee","date":"2026-04-03","kegiatan":"Code review","desc":"Meninjau hasil pekerjaan."},{"id":"e1784475357927aic7j","date":"2026-04-06","kegiatan":"Dokumentasi","desc":"Mencatat hasil pekerjaan."},{"id":"e1784475357927pbius","date":"2026-04-07","kegiatan":"Belajar project","desc":"Memahami alur project lebih lanjut."},{"id":"e1784475357927xjvh7","date":"2026-04-08","kegiatan":"Diskusi fitur","desc":"Membahas fitur berikutnya."},{"id":"e178447535792783ehh","date":"2026-04-09","kegiatan":"Review dokumentasi","desc":"Membaca dokumentasi project."},{"id":"e17844753579276zzm6","date":"2026-04-10","kegiatan":"Menunggu feedback","desc":"Menunggu masukan dari Team Lead."},{"id":"e1784475357927qjugq","date":"2026-04-13","kegiatan":"Perbaikan kecil","desc":"Melakukan perbaikan kecil pada fitur."},{"id":"e1784475357927q2z45","date":"2026-04-14","kegiatan":"Uji kembali","desc":"Menguji kembali fitur setelah perbaikan."},{"id":"e1784475357927snv0w","date":"2026-04-15","kegiatan":"Final testing","desc":"Melakukan pengujian akhir."},{"id":"e178447535792706iiw","date":"2026-04-16","kegiatan":"Final revisi","desc":"Melakukan revisi terakhir."},{"id":"e17844753579277a04k","date":"2026-04-17","kegiatan":"Penyusunan laporan","desc":"Mulai menyusun laporan magang."},{"id":"e1784475357927ap0tb","date":"2026-04-20","kegiatan":"Dokumentasi akhir","desc":"Melengkapi dokumentasi pekerjaan."},{"id":"e178447535792738vil","date":"2026-04-21","kegiatan":"Penutupan magang","desc":"Menyelesaikan kegiatan magang."},{"id":"e1784475357927eiybo","date":"2026-04-22","kegiatan":"Onboarding","desc":"Mengikuti proses onboarding dan perkenalan dengan perusahaan."},{"id":"e17844753579271pjk2","date":"2026-04-23","kegiatan":"Perkenalan tim","desc":"Berkenalan dengan anggota tim dan pembimbing."},{"id":"e17844753579279vc3c","date":"2026-04-24","kegiatan":"Pengenalan project","desc":"Mendapat penjelasan mengenai project yang akan dikerjakan."},{"id":"e1784475357927srbtd","date":"2026-04-27","kegiatan":"Pengenalan perusahaan","desc":"Mengenal lingkungan kerja perusahaan."},{"id":"e1784475357927vbf7v","date":"2026-04-28","kegiatan":"Pengenalan tech stack","desc":"Mengenal teknologi yang digunakan pada project."},{"id":"e17844753579281lrvv","date":"2026-04-29","kegiatan":"Diskusi tech stack","desc":"Mengikuti diskusi mengenai teknologi yang digunakan."},{"id":"e1784475357928nn6so","date":"2026-04-30","kegiatan":"Setup project","desc":"Menyiapkan project di komputer lokal."},{"id":"e1784475357928huy1b","date":"2026-05-01","kegiatan":"Clone repository","desc":"Melakukan clone repository dari GitHub."},{"id":"e1784475357928hrmkw","date":"2026-05-04","kegiatan":"Install dependency","desc":"Melakukan instalasi dependency project."},{"id":"e1784475357928ggbtg","date":"2026-05-05","kegiatan":"Menjalankan project","desc":"Mencoba menjalankan project di komputer lokal."},{"id":"e1784475357928chc6o","date":"2026-05-06","kegiatan":"Belajar React","desc":"Mempelajari dasar React pada project."},{"id":"e1784475357928y9ynl","date":"2026-05-07","kegiatan":"Belajar Next.js","desc":"Mempelajari struktur Next.js."},{"id":"e1784475357928ddbl2","date":"2026-05-08","kegiatan":"Belajar TypeScript","desc":"Memahami penggunaan TypeScript."},{"id":"e1784475357928tc8d0","date":"2026-05-11","kegiatan":"Belajar Tailwind","desc":"Memahami penggunaan Tailwind CSS."},{"id":"e1784475357928xs6u4","date":"2026-05-12","kegiatan":"Review source code","desc":"Membaca source code yang sudah ada."},{"id":"e1784475357928xy49d","date":"2026-05-13","kegiatan":"Belajar REST API","desc":"Mempelajari endpoint API."},{"id":"e17844753579284ahyz","date":"2026-05-14","kegiatan":"Diskusi API","desc":"Berdiskusi mengenai penggunaan API."},{"id":"e17844753579283x097","date":"2026-05-15","kegiatan":"Koordinasi","desc":"Berkoordinasi dengan Team Lead."},{"id":"e17844753579287y3vw","date":"2026-05-18","kegiatan":"Meeting progress","desc":"Mengikuti meeting progress."},{"id":"e1784475357928kvmp7","date":"2026-05-19","kegiatan":"Review project","desc":"Meninjau kembali struktur project."},{"id":"e17844753579283m0o0","date":"2026-05-20","kegiatan":"Memahami GForm","desc":"Mempelajari komponen GForm."},{"id":"e1784475357928xb2y5","date":"2026-05-21","kegiatan":"Implementasi form","desc":"Mulai mengerjakan bagian form."},{"id":"e17844753579289i4fn","date":"2026-05-22","kegiatan":"Validasi form","desc":"Menambahkan validasi input."},{"id":"e1784475357928ov95g","date":"2026-05-25","kegiatan":"Perbaikan UI","desc":"Menyesuaikan tampilan halaman."},{"id":"e1784475357928aw0w3","date":"2026-05-26","kegiatan":"Integrasi API","desc":"Menghubungkan frontend dengan API."},{"id":"e1784475357928vwpmj","date":"2026-05-27","kegiatan":"Testing","desc":"Melakukan pengujian fitur."},{"id":"e1784475357928gwl5y","date":"2026-05-28","kegiatan":"Debugging","desc":"Mencari penyebab error."},{"id":"e1784475357928iv49d","date":"2026-05-29","kegiatan":"Perbaikan bug","desc":"Memperbaiki bug yang ditemukan."},{"id":"e17844753579288c1cl","date":"2026-06-01","kegiatan":"Revisi kode","desc":"Melakukan revisi berdasarkan masukan."},{"id":"e17844753579284j9oi","date":"2026-06-02","kegiatan":"Code review","desc":"Meninjau hasil pekerjaan."},{"id":"e17844753579280w190","date":"2026-06-03","kegiatan":"Dokumentasi","desc":"Mencatat hasil pekerjaan."},{"id":"e178447535792871v6m","date":"2026-06-04","kegiatan":"Belajar project","desc":"Memahami alur project lebih lanjut."},{"id":"e178447535792860yrq","date":"2026-06-05","kegiatan":"Diskusi fitur","desc":"Membahas fitur berikutnya."},{"id":"e178447535792802ty1","date":"2026-06-08","kegiatan":"Review dokumentasi","desc":"Membaca dokumentasi project."},{"id":"e1784475357928wnnup","date":"2026-06-09","kegiatan":"Menunggu feedback","desc":"Menunggu masukan dari Team Lead."},{"id":"e1784475357928hg3zg","date":"2026-06-10","kegiatan":"Perbaikan kecil","desc":"Melakukan perbaikan kecil pada fitur."},{"id":"e1784475357928es845","date":"2026-06-11","kegiatan":"Uji kembali","desc":"Menguji kembali fitur setelah perbaikan."},{"id":"e178447535792840zns","date":"2026-06-12","kegiatan":"Final testing","desc":"Melakukan pengujian akhir."},{"id":"e1784475357928s1ob1","date":"2026-06-15","kegiatan":"Final revisi","desc":"Melakukan revisi terakhir."},{"id":"e1784475357928whafi","date":"2026-06-16","kegiatan":"Penyusunan laporan","desc":"Mulai menyusun laporan magang."},{"id":"e1784475357928zixsk","date":"2026-06-17","kegiatan":"Penyusunan laporan","desc":"menyusun laporan magang."},{"id":"e1784475357928hyyfc","date":"2026-06-18","kegiatan":"Penyusunan laporan","desc":"menyusun laporan magang."},{"id":"e178447535792802a3l","date":"2026-06-19","kegiatan":"Penyusunan laporan","desc":"menyusun laporan magang."},{"id":"e178447535792864zis","date":"2026-06-22","kegiatan":"Penyusunan laporan","desc":"menyusun laporan magang."},{"id":"e1784475357928i9evw","date":"2026-06-23","kegiatan":"Penyusunan laporan","desc":"menyusun laporan magang."},{"id":"e1784475357928dh7z6","date":"2026-06-24","kegiatan":"Penyusunan laporan","desc":"menyusun laporan magang."},{"id":"e1784475357928li5s2","date":"2026-06-25","kegiatan":"Dokumentasi akhir","desc":"Melengkapi dokumentasi pekerjaan."},{"id":"e1784475357928oug7j","date":"2026-06-26","kegiatan":"Penutupan magang","desc":"Menyelesaikan kegiatan magang."}];
+</script>
+<script>
+const STORAGE_KEY = 'logbook-entries-turbines';
+const START_DATE = new Date('2026-02-23');
+const END_DATE = new Date('2026-06-26');
+
+let entries = [];
+let editingId = null;
+let pendingDeleteId = null;
+
+function countWeekdays(start, end){
+  let count = 0;
+  let d = new Date(start);
+  while (d <= end){
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) count++;
+    d.setDate(d.getDate() + 1);
+  }
+  return count;
+}
+const TOTAL_WORKDAYS = countWeekdays(START_DATE, END_DATE);
+
+function fmtDate(iso){
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('id-ID', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 1800);
+}
+
+// Works two ways: window.storage when running inside a Claude artifact panel
+// (persists to your account), or localStorage when opened as a standalone
+// downloaded HTML file (persists to this browser on this device).
+const hasCloudStorage = typeof window.storage !== 'undefined';
+
+async function loadEntries(){
+  try{
+    if (window.__SNAPSHOT__ && window.__SNAPSHOT__.length){
+      // Pre-baked data ships with this file — load it as the starting point
+      // if this browser has nothing saved yet.
+      const existing = hasCloudStorage
+        ? await window.storage.get(STORAGE_KEY, false).catch(()=>null)
+        : localStorage.getItem(STORAGE_KEY);
+      if (!existing){
+        entries = window.__SNAPSHOT__.slice();
+        await persist();
+        render();
+        updateStorageBadge();
+        return;
+      }
+    }
+    if (hasCloudStorage){
+      const res = await window.storage.get(STORAGE_KEY, false);
+      entries = res ? JSON.parse(res.value) : [];
+    } else {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      entries = raw ? JSON.parse(raw) : [];
+    }
+  }catch(e){
+    entries = (window.__SNAPSHOT__ || []).slice();
+  }
+  render();
+  updateStorageBadge();
+}
+
+async function persist(){
+  try{
+    if (hasCloudStorage){
+      await window.storage.set(STORAGE_KEY, JSON.stringify(entries), false);
+    } else {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    }
+  }catch(e){
+    showToast('Gagal menyimpan — coba ekspor CSV sebagai cadangan');
+  }
+}
+
+function updateStorageBadge(){
+  const el = document.getElementById('storageBadge');
+  if (!el) return;
+  el.textContent = hasCloudStorage
+    ? 'Tersimpan ke akun Claude'
+    : 'Tersimpan lokal di browser ini saja';
+}
+
+function render(){
+  entries.sort((a,b)=> a.date.localeCompare(b.date));
+  const filled = new Set(entries.map(e=>e.date)).size;
+  const pct = TOTAL_WORKDAYS ? Math.min(100, Math.round((filled/TOTAL_WORKDAYS)*100)) : 0;
+  document.getElementById('tideFill').style.width = pct + '%';
+  document.getElementById('tideText').textContent = `${filled} / ${TOTAL_WORKDAYS} hari kerja terisi`;
+  document.getElementById('tidePct').textContent = pct + '%';
+  document.getElementById('entryCount').textContent = `${entries.length} entri`;
+
+  const query = document.getElementById('searchBox').value.trim().toLowerCase();
+  const list = entries.filter(e => !query || e.kegiatan.toLowerCase().includes(query) || (e.desc||'').toLowerCase().includes(query));
+
+  const wrap = document.getElementById('tableWrap');
+  if (list.length === 0){
+    wrap.innerHTML = `<div class="empty"><div class="empty-wave">Belum ada entri</div>Tambahkan kegiatan hari ini di form atas.</div>`;
+    return;
+  }
+
+  let rows = list.map(e => `
+    <tr>
+      <td class="td-date">${fmtDate(e.date)}</td>
+      <td class="td-kegiatan">${escapeHtml(e.kegiatan)}</td>
+      <td class="td-desc">${escapeHtml(e.desc||'—')}</td>
+      <td>
+        <div class="actions">
+          <button class="btn btn-ghost btn-sm" data-copy="${e.id}">Salin</button>
+          <button class="btn btn-ghost btn-sm" data-edit="${e.id}">Ubah</button>
+          <button class="btn btn-ghost btn-sm btn-danger" data-del="${e.id}">Hapus</button>
+        </div>
+      </td>
+    </tr>`).join('');
+
+  wrap.innerHTML = `
+    <table>
+      <thead><tr><th>Tanggal</th><th>Kegiatan</th><th>Keterangan</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+
+  wrap.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => copyEntry(b.dataset.copy)));
+  wrap.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => startEdit(b.dataset.edit)));
+  wrap.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => askDelete(b.dataset.del)));
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function copyEntry(id){
+  const e = entries.find(x=>x.id===id);
+  if (!e) return;
+  const text = `Tanggal: ${fmtDate(e.date)}\nKegiatan: ${e.kegiatan}\nKeterangan: ${e.desc||'-'}`;
+  navigator.clipboard.writeText(text).then(()=> showToast('Disalin — siap ditempel ke Google Form'));
+}
+
+function startEdit(id){
+  const e = entries.find(x=>x.id===id);
+  if (!e) return;
+  editingId = id;
+  document.getElementById('fDate').value = e.date;
+  document.getElementById('fKegiatan').value = e.kegiatan;
+  document.getElementById('fDesc').value = e.desc || '';
+  document.getElementById('formTitle').textContent = 'Ubah entri';
+  document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function resetForm(){
+  editingId = null;
+  document.getElementById('fDate').value = '';
+  document.getElementById('fKegiatan').value = '';
+  document.getElementById('fDesc').value = '';
+  document.getElementById('formTitle').textContent = 'Tambah entri';
+  document.getElementById('cancelEditBtn').style.display = 'none';
+}
+
+function askDelete(id){
+  pendingDeleteId = id;
+  document.getElementById('modalBg').classList.add('show');
+}
+
+document.getElementById('modalCancel').addEventListener('click', ()=>{
+  pendingDeleteId = null;
+  document.getElementById('modalBg').classList.remove('show');
+});
+document.getElementById('modalConfirm').addEventListener('click', async ()=>{
+  entries = entries.filter(e=>e.id !== pendingDeleteId);
+  document.getElementById('modalBg').classList.remove('show');
+  await persist();
+  render();
+  showToast('Entri dihapus');
+});
+
+document.getElementById('saveBtn').addEventListener('click', async ()=>{
+  const date = document.getElementById('fDate').value;
+  const kegiatan = document.getElementById('fKegiatan').value.trim();
+  const desc = document.getElementById('fDesc').value.trim();
+  if (!date || !kegiatan){
+    showToast('Isi tanggal dan kegiatan dulu');
+    return;
+  }
+  if (editingId){
+    const e = entries.find(x=>x.id===editingId);
+    e.date = date; e.kegiatan = kegiatan; e.desc = desc;
+    showToast('Entri diperbarui');
+  } else {
+    entries.push({ id: 'e' + Date.now() + Math.random().toString(36).slice(2,7), date, kegiatan, desc });
+    showToast('Entri ditambahkan');
+  }
+  resetForm();
+  await persist();
+  render();
+});
+
+document.getElementById('cancelEditBtn').addEventListener('click', resetForm);
+document.getElementById('searchBox').addEventListener('input', render);
+
+document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
+  if (entries.length === 0){ showToast('Belum ada entri untuk diekspor'); return; }
+  const rows = [['Tanggal','Kegiatan','Keterangan']];
+  entries.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{
+    rows.push([e.date, e.kegiatan, (e.desc||'').replace(/\n/g,' ')]);
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'logbook-turbines.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV diunduh');
+});
+
+document.getElementById('exportTextBtn').addEventListener('click', ()=>{
+  if (entries.length === 0){ showToast('Belum ada entri untuk disalin'); return; }
+  const text = entries.slice().sort((a,b)=>a.date.localeCompare(b.date))
+    .map(e => `${fmtDate(e.date)}\n${e.kegiatan}\n${e.desc||'-'}\n`)
+    .join('\n');
+  navigator.clipboard.writeText(text).then(()=> showToast('Semua entri disalin ke clipboard'));
+});
+
+function parseCsv(text){
+  // simple RFC4180-ish parser: handles quoted fields with commas/newlines
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for (let i = 0; i < text.length; i++){
+    const c = text[i], next = text[i+1];
+    if (inQuotes){
+      if (c === '"' && next === '"'){ field += '"'; i++; }
+      else if (c === '"'){ inQuotes = false; }
+      else { field += c; }
+    } else {
+      if (c === '"'){ inQuotes = true; }
+      else if (c === ','){ row.push(field); field = ''; }
+      else if (c === '\n'){ row.push(field); rows.push(row); row = []; field = ''; }
+      else if (c === '\r'){ /* skip */ }
+      else { field += c; }
+    }
+  }
+  if (field.length || row.length){ row.push(field); rows.push(row); }
+  return rows.filter(r => r.length && r.some(v => v.trim() !== ''));
+}
+
+document.getElementById('importCsvBtn').addEventListener('click', ()=>{
+  document.getElementById('importCsvInput').click();
+});
+
+document.getElementById('importCsvInput').addEventListener('change', async (ev)=>{
+  const file = ev.target.files[0];
+  if (!file) return;
+  const text = await file.text();
+  const rows = parseCsv(text);
+  if (rows.length === 0){ showToast('File CSV kosong atau tidak terbaca'); ev.target.value=''; return; }
+
+  // detect and skip header row (Tanggal, Kegiatan, Keterangan)
+  let start = 0;
+  const first = rows[0].map(v => v.trim().toLowerCase());
+  if (first[0] === 'tanggal' || first.includes('tanggal')) start = 1;
+
+  const existingKeys = new Set(entries.map(e => e.date + '|' + e.kegiatan.trim().toLowerCase()));
+  let added = 0, skipped = 0;
+
+  for (let i = start; i < rows.length; i++){
+    const r = rows[i];
+    let [rawDate, kegiatan, desc] = [r[0]||'', r[1]||'', r[2]||''];
+    rawDate = rawDate.trim();
+    kegiatan = kegiatan.trim();
+    desc = (desc||'').trim();
+    if (!rawDate || !kegiatan) { skipped++; continue; }
+
+    // normalize date: accept YYYY-MM-DD or DD/MM/YYYY
+    let iso = rawDate;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(rawDate)){
+      const [dd,mm,yyyy] = rawDate.split('/');
+      iso = `${yyyy}-${mm}-${dd}`;
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)){ skipped++; continue; }
+
+    const key = iso + '|' + kegiatan.toLowerCase();
+    if (existingKeys.has(key)){ skipped++; continue; }
+
+    entries.push({ id: 'e' + Date.now() + Math.random().toString(36).slice(2,7), date: iso, kegiatan, desc });
+    existingKeys.add(key);
+    added++;
+  }
+
+  await persist();
+  render();
+  showToast(`Impor selesai: ${added} ditambahkan, ${skipped} dilewati`);
+  ev.target.value = '';
+});
+
+document.getElementById('exportSnapshotBtn').addEventListener('click', async ()=>{
+  if (entries.length === 0){ showToast('Belum ada entri untuk disertakan'); return; }
+  try{
+    const res = await fetch(window.location.href);
+    let html = await res.text();
+    const snapshotJson = JSON.stringify(entries);
+    html = html.replace(
+      /window\.__SNAPSHOT__\s*=\s*\[[\s\S]*?\];/,
+      `window.__SNAPSHOT__ = ${snapshotJson};`
+    );
+    const blob = new Blob([html], {type:'text/html;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'logbook-magang.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Unduh selesai — unggah file ini ke Netlify untuk menggantikan yang lama');
+  }catch(e){
+    showToast('Gagal membuat file — coba muat ulang halaman lalu ulangi');
+  }
+});
+
+// default date = today, clamped into range if outside
+(function initDate(){
+  const today = new Date();
+  const iso = today.toISOString().slice(0,10);
+  document.getElementById('fDate').value = iso;
+})();
+
+loadEntries();
+</script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
